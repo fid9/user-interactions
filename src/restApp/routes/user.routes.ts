@@ -81,7 +81,48 @@ router.get(
 
         const user = await UserService.get(username);
 
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.UserNotFound
+            }).end();
+        }
+
         return res.status(httpStatus.OK).json({ user }).end();
     }
 )
+
+router.post(
+    '/me/update-password',
+    authenticateToken,
+    async (
+        req: CustomRequest,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<Response | void> => {
+        const { username } = req;
+
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await UserService.get(username);
+
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.UserNotFound
+            }).end();
+        }
+
+        const isValid = await validatePassword(currentPassword, user.password);
+
+        if (!isValid) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.WrongUsernameOrPassword
+            }).end();
+        }
+
+        await UserService.updatePassword(username, newPassword);
+
+        return res.status(httpStatus.OK).end();
+    }
+)
+
 export default router;

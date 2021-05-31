@@ -1,6 +1,7 @@
 import {
     createUserQuery,
-    getUserQuery
+    getUserQuery,
+    updatePasswordQuery
 } from "../database/queries/user.query";
 
 import bcrypt from 'bcrypt';
@@ -43,7 +44,7 @@ export default class UserService {
 
             const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-            const [, affectedRows] = await database.query(
+            await database.query(
                 createUserQuery,
                 {
                     replacements: {
@@ -54,15 +55,7 @@ export default class UserService {
                 }
             );
 
-            if (affectedRows > 0) {
-                return {
-                    username,
-                };
-            }
-
-            return {
-                error: ErrorType.UserCouldNotBeCreated,
-            };
+            return { username }
         } catch (err) {
             console.log(err);
 
@@ -71,4 +64,22 @@ export default class UserService {
             };
         }
     };
+
+    static updatePassword = async (
+        username: string,
+        newPassword: string,
+    ): Promise<void> => {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await database.query(
+            updatePasswordQuery,
+            {
+                replacements: {
+                    username,
+                    password: hashedPassword
+                },
+                type: QueryTypes.UPDATE
+            }
+        );
+    }
 }

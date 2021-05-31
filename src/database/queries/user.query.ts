@@ -15,3 +15,9 @@ INSERT INTO
 users (username, password, created_at, updated_at)
 VALUES (:username, :password, NOW(), NOW());
 `;
+
+export const updatePasswordQuery = `
+UPDATE users
+SET password = :password
+WHERE username = :username;
+`
