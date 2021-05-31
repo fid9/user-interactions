@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { CustomRequest } from "src/interfaces/CustomRequest";
+import { CustomRequest } from "../interfaces/CustomRequest";
 
 dotenv.config();
 
