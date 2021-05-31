@@ -1,0 +1,23 @@
+{
+  "name": "Fidan_Sinani_NodeJS",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fid9/Fidan_Sinani_NodeJS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fid9/Fidan_Sinani_NodeJS/issues"
+  },
+  "homepage": "https://github.com/fid9/Fidan_Sinani_NodeJS#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
+}
