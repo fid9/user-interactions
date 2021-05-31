@@ -1,5 +1,5 @@
 import { QueryTypes } from "sequelize";
-import { likeUserQuery } from "../database/queries/like.query";
+import { likeUserQuery, unlikeUserQuery } from "../database/queries/like.query";
 import { database } from "../database/connection";
 
 export default class LikeService {
@@ -15,6 +15,22 @@ export default class LikeService {
                     receiverUsername
                 },
                 type: QueryTypes.INSERT
+            }
+        );
+    }
+
+    static delete = async (
+        senderUsername: string,
+        receiverUsername: string
+    ): Promise<void> => {
+        await database.query(
+            unlikeUserQuery,
+            {
+                replacements: {
+                    senderUsername,
+                    receiverUsername
+                },
+                type: QueryTypes.DELETE
             }
         );
     }

@@ -33,4 +33,29 @@ router.post(
     }
 )
 
+router.delete(
+    '/user/:id/unlike',
+    authenticateToken,
+    async (
+        req: CustomRequest,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<Response | void> => {
+        const { username } = req;
+        const { id } = req.params;
+
+        const user = await UserService.get(username);
+
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.UserNotFound
+            }).end();
+        }
+
+        await LikeService.delete(username, id);
+
+        return res.status(httpStatus.OK).end();
+    }
+)
+
 export default router;
