@@ -2,10 +2,12 @@ import { QueryTypes } from "sequelize";
 import { 
     likeUserQuery, 
     unlikeUserQuery, 
-    getUserLikesQuery 
+    getUserLikesQuery, 
+    getAllLikesQuery
 } from "../database/queries/like.query";
 import { database } from "../database/connection";
 import { GetUserLikesResponse } from "../interfaces/GetUserLikesResponse";
+import { GetAllLikesResponse } from "src/interfaces/GetAllLikesResponse";
 
 export default class LikeService {
     static get = async (
@@ -25,6 +27,18 @@ export default class LikeService {
         const likes = results.map(like => like.senderUser);
 
         return likes;
+    }
+
+    static getAll = async(): Promise<GetAllLikesResponse[]> => {
+        const results = await database.query<GetAllLikesResponse>(
+            getAllLikesQuery,
+            {
+                type: QueryTypes.SELECT,
+                raw: true,
+            }
+        )
+
+        return results;
     }
 
     static create = async (
