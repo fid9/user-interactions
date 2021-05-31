@@ -11,3 +11,9 @@ DELETE FROM likes
 WHERE sender_user = :senderUsername
 AND receiver_user = :receiverUsername;
 `;
+
+export const getUserLikesQuery = `
+SELECT sender_user as senderUser 
+FROM likes
+WHERE receiver_user = :username;
+`

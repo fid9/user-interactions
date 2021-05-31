@@ -8,6 +8,34 @@ import LikeService from '../../services/like.service';
 
 const router = express.Router();
 
+router.get(
+    '/user/:id',
+    authenticateToken,
+    async (
+        req: CustomRequest,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<Response | void> => {
+        const { username } = req;
+        const { id } = req.params;
+
+        const user = await UserService.get(username);
+
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.UserNotFound
+            }).end();
+        }
+
+        const likes = await LikeService.get(id);
+
+        return res.status(httpStatus.OK).json({
+            likes,
+            likesCount: likes.length
+        }).end();
+    }
+)
+
 router.post(
     '/user/:id/like',
     authenticateToken,
