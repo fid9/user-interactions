@@ -4,6 +4,7 @@ import UserService from '../../services/user.service';
 import { CustomRequest } from '../../interfaces/CustomRequest';
 import { ErrorType } from '../../enums';
 import { generateToken, validatePassword } from '../../utils';
+import { authenticateToken } from '../authentication';
 
 const router = express.Router();
 
@@ -41,35 +42,46 @@ router.post(
     async (
         req: CustomRequest,
         res: Response,
-        next: NextFunction,
+        _next: NextFunction,
     ): Promise<Response | void> => {
         const { username, password } = req.body;
 
-        try {
-            const user = await UserService.get(username);
+        const user = await UserService.get(username);
 
-            if (!user) {
-                return res.status(httpStatus.NOT_FOUND).json({
-                    error: ErrorType.WrongUsernameOrPassword
-                }).end();
-            }
-
-            const isValid = await validatePassword(password, user.password);
-
-            if (!isValid) {
-                return res.status(httpStatus.NOT_FOUND).json({
-                    error: ErrorType.WrongUsernameOrPassword
-                }).end();
-            }
-
-            const token = generateToken(username);
-
-            return res.status(httpStatus.OK).json({ token }).end();
-        } catch (error) {
-            next(error);
-
-            return null;
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.WrongUsernameOrPassword
+            }).end();
         }
+
+        const isValid = await validatePassword(password, user.password);
+
+        if (!isValid) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                error: ErrorType.WrongUsernameOrPassword
+            }).end();
+        }
+
+        const token = generateToken(username);
+
+        return res.status(httpStatus.OK).json({ token }).end();
+
+    }
+)
+
+router.get(
+    '/me',
+    authenticateToken,
+    async (
+        req: CustomRequest,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<Response | void> => {
+        const { username } = req;
+
+        const user = await UserService.get(username);
+
+        return res.status(httpStatus.OK).json({ user }).end();
     }
 )
 export default router;

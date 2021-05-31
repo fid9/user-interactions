@@ -1,5 +1,11 @@
 export const getUserQuery = `
-SELECT * FROM users
+SELECT
+id, 
+username,
+password,
+created_at AS createdAt,
+updated_at AS updatedAt
+FROM users
 WHERE username = :username
 LIMIT 1;
 `;
