@@ -56,7 +56,7 @@ router.post(
         const isValid = await validatePassword(password, user.password);
 
         if (!isValid) {
-            return res.status(httpStatus.NOT_FOUND).json({
+            return res.status(httpStatus.FORBIDDEN).json({
                 error: ErrorType.WrongUsernameOrPassword
             }).end();
         }
@@ -111,7 +111,7 @@ router.post(
         const isValid = await validatePassword(currentPassword, user.password);
 
         if (!isValid) {
-            return res.status(httpStatus.NOT_FOUND).json({
+            return res.status(httpStatus.FORBIDDEN).json({
                 error: ErrorType.WrongUsernameOrPassword
             }).end();
         }

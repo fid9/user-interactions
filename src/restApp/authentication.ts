@@ -6,7 +6,6 @@ import dotenv from 'dotenv';
 import { CustomRequest } from "../interfaces/CustomRequest";
 import httpStatus from "http-status";
 import { JWTResponse } from "../interfaces/JWTResponse";
-import { existingUser } from "../../mock-data/user.mocks";
 
 dotenv.config();
 
@@ -15,13 +14,7 @@ const authenticateToken = (
     res: Response,
     next: NextFunction,
 ): void => {
-    if (process.env.NODE_ENV === 'test') {
-        const { authorization } = req.headers;
-
-        if (authorization !== existingUser.username) {
-            return res.status(httpStatus.FORBIDDEN).end();
-        }
-        
+    if (process.env.NODE_ENV === 'test') { 
         req.username = req.headers.authorization;
 
         return next();

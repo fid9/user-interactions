@@ -9,5 +9,5 @@ export const existingUser = {
 
 export const newUser = {
     username: 'fifty2',
-    rawPassword: '123456',
+    rawPassword: '1234567',
 }

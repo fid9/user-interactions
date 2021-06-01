@@ -137,31 +137,32 @@ describe('user.routes.ts', (): void => {
                     'get',
                 );
 
-                const validatePassword = jest.spyOn(
-                    Utils,
-                    'validatePassword'
-                )
-
                 const spyOnQuery = jest.spyOn(database, 'query');
 
                 const response = await agent
                     .post('/user-api/login')
                     .send({
-                        username: newUser.username,
+                        username: existingUser.username,
                         password: newUser.rawPassword
                     });
 
-                expect(getUser).toBeCalledWith(newUser.username);
+                expect(getUser).toBeCalledWith(existingUser.username);
 
                 expect(spyOnQuery).toBeCalledWith(
                     getUserQuery,
                     expect.any(Object),
                 );
 
-                expect(validatePassword).toHaveBeenCalledTimes(0);
+                await expect(
+                    Utils.validatePassword(
+                        newUser.rawPassword, 
+                        existingUser.password
+                )).resolves.toEqual(false);
 
-                expect(response.status).toBe(404);
-                expect(response.body.error).toBe(ErrorType.WrongUsernameOrPassword);
+                expect(response.status).toBe(403);
+                expect(response.body).toStrictEqual({
+                    error: ErrorType.WrongUsernameOrPassword
+                });
             }
         );
 
@@ -205,11 +206,107 @@ describe('user.routes.ts', (): void => {
                     .get('/user-api/me')
                     .set('authorization', newUser.username);
 
-                expect(getUser).toHaveBeenCalledTimes(0);
+                expect(getUser).toBeCalledWith(newUser.username);
 
-                expect(spyOnQuery).toHaveBeenCalledTimes(0);
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                expect(response.status).toBe(404);
+                expect(response.body).toStrictEqual(
+                    { error: ErrorType.UserNotFound}
+                );
+            }
+        );
+
+        test(
+            'It should succeed on update password',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const updatePassword = jest.spyOn(
+                    UserService,
+                    'updatePassword'
+                )
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .post('/user-api/me/update-password')
+                    .send({
+                        currentPassword: existingUser.rawPassword,
+                        newPassword: '12345678'
+                    })
+                    .set('authorization', existingUser.username);
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                await expect(
+                    Utils.validatePassword(
+                        existingUser.rawPassword, 
+                        existingUser.password
+                )).resolves.toEqual(true);
+
+                expect(updatePassword).toBeCalledWith(
+                    existingUser.username,
+                    '12345678'
+                );
+
+                expect(response.status).toBe(200);
+            }
+        );
+
+        test(
+            'It should fail on update password',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const updatePassword = jest.spyOn(
+                    UserService,
+                    'updatePassword'
+                )
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .post('/user-api/me/update-password')
+                    .send({
+                        currentPassword: newUser.rawPassword,
+                        newPassword: '12345678'
+                    })
+                    .set('authorization', existingUser.username);
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                await expect(
+                    Utils.validatePassword(
+                        newUser.rawPassword, 
+                        existingUser.password
+                )).resolves.toEqual(false);
+
+                expect(updatePassword).toHaveBeenCalledTimes(0);
 
                 expect(response.status).toBe(403);
+                expect(response.body).toStrictEqual(
+                    { error: ErrorType.WrongUsernameOrPassword }
+                );
             }
         );
     })
