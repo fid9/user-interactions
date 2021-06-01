@@ -36,5 +36,9 @@ export const database = {
                 userWithoutLikes,
             ];
         }
+
+        if (queryTestId === QueryTestId.GetUserLikes) {
+            return [userWithoutLikes]   
+        }
     }
 }

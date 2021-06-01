@@ -19,6 +19,7 @@ export default class LikeService {
             {
                 replacements: {
                     username,
+                    QueryTestId: QueryTestId.GetUserLikes
                 },
                 type: QueryTypes.SELECT,
                 raw: true,

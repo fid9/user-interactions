@@ -9,6 +9,6 @@ export const userWithLikes = {
 }
 
 export const userWithoutLikes = {
-    username: 'fifty2',
+    senderUser: 'fifty2',
     count: 0
 }
