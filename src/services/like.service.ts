@@ -55,7 +55,8 @@ export default class LikeService {
             {
                 replacements: {
                     senderUsername,
-                    receiverUsername
+                    receiverUsername,
+                    QueryTestId: QueryTestId.CreateLike
                 },
                 type: QueryTypes.INSERT
             }
@@ -71,7 +72,8 @@ export default class LikeService {
             {
                 replacements: {
                     senderUsername,
-                    receiverUsername
+                    receiverUsername,
+                    QueryTestId: QueryTestId.DeleteLike
                 },
                 type: QueryTypes.DELETE
             }

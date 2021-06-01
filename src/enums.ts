@@ -10,5 +10,7 @@ export enum QueryTestId {
     GetUser = 'GetUser',
     CreateUser = 'CreateUser',
     GetMostLiked = 'GetMostLiked',
-    GetUserLikes = 'GetUserLikes'
+    GetUserLikes = 'GetUserLikes',
+    CreateLike = 'CreateLike',
+    DeleteLike = 'DeleteLike'
 }

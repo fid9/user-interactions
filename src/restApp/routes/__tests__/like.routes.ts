@@ -79,6 +79,76 @@ describe('like.routes.ts', (): void => {
             }
         );
      });
-    describe('/ - like user', (): void => { });
-    describe('/ - unlike user', (): void => { });
+
+    describe('/ - like user', (): void => { 
+        test(
+            'It should succeed on get user likes',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const createLike = jest.spyOn(
+                    LikeService,
+                    'create',
+                )
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .post(`/like-api/user/${userWithLikes.username}/like`)
+                    .set('authorization', existingUser.username);
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                expect(createLike).toBeCalledWith(
+                    existingUser.username,
+                    userWithLikes.username
+                );
+
+                expect(response.status).toBe(200);
+            }
+        );
+     });
+
+    describe('/ - unlike user', (): void => { 
+        test(
+            'It should succeed on get user likes',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const deleteLike = jest.spyOn(
+                    LikeService,
+                    'create',
+                )
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .delete(`/like-api/user/${userWithLikes.username}/unlike`)
+                    .set('authorization', existingUser.username);
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                expect(deleteLike).toBeCalledWith(
+                    existingUser.username,
+                    userWithLikes.username
+                );
+
+                expect(response.status).toBe(200);
+            }
+        );
+     });
 })

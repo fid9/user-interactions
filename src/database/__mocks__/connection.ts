@@ -40,5 +40,12 @@ export const database = {
         if (queryTestId === QueryTestId.GetUserLikes) {
             return [userWithoutLikes]   
         }
+
+        if (
+            queryTestId === QueryTestId.CreateLike
+            || queryTestId === QueryTestId.DeleteLike    
+        ) {
+            return;
+        }
     }
 }
