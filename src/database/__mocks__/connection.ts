@@ -1,10 +1,16 @@
 import { existingUser } from "../../../mock-data/user.mocks";
 import { QueryTestId } from "../../enums";
 import bcrypt from 'bcrypt';
+import { 
+    userWithLikes, 
+    userWithMostLikes, 
+    userWithoutLikes 
+} from "../../../mock-data/like.mocks";
 
 export const database = {
     query: async (_query: string, options: any): Promise<any> => {
         const { QueryTestId: queryTestId, username } = options.replacements;
+
         if (queryTestId === QueryTestId.GetUser) {
             if (username === existingUser.username) {
                 const password = await bcrypt.hash(
@@ -19,8 +25,16 @@ export const database = {
             return [];
         }
 
-        if (options.replacements.QueryTestId === QueryTestId.CreateUser) {
+        if (queryTestId === QueryTestId.CreateUser) {
             return;
+        }
+
+        if (queryTestId === QueryTestId.GetMostLiked) {
+            return [
+                userWithMostLikes,
+                userWithLikes,
+                userWithoutLikes,
+            ];
         }
     }
 }

@@ -29,7 +29,7 @@ describe('user.routes.ts', (): void => {
                 const createUser = jest.spyOn(
                     UserService,
                     'create'
-                );  
+                );
 
                 const response = await agent
                     .put('/user-api/signup')
@@ -53,8 +53,7 @@ describe('user.routes.ts', (): void => {
                 expect(createUser).toHaveReturned();
 
                 expect(response.status).toBe(200);
-            }
-        );
+            })
 
         test(
             'It should fail on user creation',
@@ -69,7 +68,7 @@ describe('user.routes.ts', (): void => {
                 const createUser = jest.spyOn(
                     UserService,
                     'create'
-                );  
+                );
 
                 const response = await agent
                     .put('/user-api/signup')
@@ -94,6 +93,9 @@ describe('user.routes.ts', (): void => {
                 expect(response.body.error).toBe(ErrorType.UserAlreadyExists);
             }
         );
+    });
+
+    describe('/ - login', (): void => {
 
         test(
             'It should succeed on user login',
@@ -121,9 +123,9 @@ describe('user.routes.ts', (): void => {
 
                 await expect(
                     Utils.validatePassword(
-                        existingUser.rawPassword, 
+                        existingUser.rawPassword,
                         existingUser.password
-                )).resolves.toEqual(true);
+                    )).resolves.toEqual(true);
 
                 expect(response.status).toBe(200);
             }
@@ -155,9 +157,9 @@ describe('user.routes.ts', (): void => {
 
                 await expect(
                     Utils.validatePassword(
-                        newUser.rawPassword, 
+                        newUser.rawPassword,
                         existingUser.password
-                )).resolves.toEqual(false);
+                    )).resolves.toEqual(false);
 
                 expect(response.status).toBe(403);
                 expect(response.body).toStrictEqual({
@@ -166,6 +168,9 @@ describe('user.routes.ts', (): void => {
             }
         );
 
+    });
+
+    describe('/ - get current user', (): void => {
         test(
             'It should succeed on get current user',
             async (): Promise<void> => {
@@ -188,7 +193,7 @@ describe('user.routes.ts', (): void => {
                 );
 
                 expect(response.status).toBe(200);
-                expect(response.body).toStrictEqual({ user: existingUser});
+                expect(response.body).toStrictEqual({ user: existingUser });
             }
         );
 
@@ -215,11 +220,13 @@ describe('user.routes.ts', (): void => {
 
                 expect(response.status).toBe(404);
                 expect(response.body).toStrictEqual(
-                    { error: ErrorType.UserNotFound}
+                    { error: ErrorType.UserNotFound }
                 );
             }
         );
+    });
 
+    describe('/ - update user password', (): void => {
         test(
             'It should succeed on update password',
             async (): Promise<void> => {
@@ -252,9 +259,9 @@ describe('user.routes.ts', (): void => {
 
                 await expect(
                     Utils.validatePassword(
-                        existingUser.rawPassword, 
+                        existingUser.rawPassword,
                         existingUser.password
-                )).resolves.toEqual(true);
+                    )).resolves.toEqual(true);
 
                 expect(updatePassword).toBeCalledWith(
                     existingUser.username,
@@ -272,11 +279,6 @@ describe('user.routes.ts', (): void => {
                     UserService,
                     'get',
                 );
-
-                const updatePassword = jest.spyOn(
-                    UserService,
-                    'updatePassword'
-                )
 
                 const spyOnQuery = jest.spyOn(database, 'query');
 
@@ -297,11 +299,9 @@ describe('user.routes.ts', (): void => {
 
                 await expect(
                     Utils.validatePassword(
-                        newUser.rawPassword, 
+                        newUser.rawPassword,
                         existingUser.password
-                )).resolves.toEqual(false);
-
-                expect(updatePassword).toHaveBeenCalledTimes(0);
+                    )).resolves.toEqual(false);
 
                 expect(response.status).toBe(403);
                 expect(response.body).toStrictEqual(
@@ -309,5 +309,5 @@ describe('user.routes.ts', (): void => {
                 );
             }
         );
-    })
+    });
 })

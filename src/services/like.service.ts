@@ -8,6 +8,7 @@ import {
 import { database } from "../database/connection";
 import { GetUserLikesResponse } from "../interfaces/GetUserLikesResponse";
 import { GetAllLikesResponse } from "../interfaces/GetAllLikesResponse";
+import { QueryTestId } from "../enums";
 
 export default class LikeService {
     static get = async (
@@ -35,6 +36,9 @@ export default class LikeService {
             {
                 type: QueryTypes.SELECT,
                 raw: true,
+                replacements: {
+                    QueryTestId: QueryTestId.GetMostLiked,
+                }
             }
         )
 

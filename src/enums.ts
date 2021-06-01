@@ -8,5 +8,6 @@ export enum ErrorType {
 
 export enum QueryTestId {
     GetUser = 'GetUser',
-    CreateUser = 'CreateUser'
+    CreateUser = 'CreateUser',
+    GetMostLiked = 'GetMostLiked'
 }

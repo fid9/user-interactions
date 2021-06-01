@@ -8,4 +8,4 @@ export const generateToken = (
 export const validatePassword = async (
     password: string,
     dbPassword: string,
-): Promise<boolean> => bcrypt.compare(password, dbPassword)
+): Promise<boolean> => bcrypt.compare(password, dbPassword);
