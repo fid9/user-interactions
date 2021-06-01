@@ -9,24 +9,25 @@ import { database } from "../database/connection";
 import { QueryTypes } from "sequelize";
 import { User } from "../interfaces/User";
 import { CreateUserResponse } from "../interfaces/CreateUserResponse";
-import { ErrorType } from "../enums";
+import { ErrorType, QueryTestId } from "../enums";
 
 export default class UserService {
     static get = async (
         username: string,
     ): Promise<User> => {
-        const [user] = await database.query<User>(
+        const users = await database.query<User>(
             getUserQuery,
             {
                 replacements: {
+                    QueryTestId: QueryTestId.GetUser,
                     username,
                 },
                 type: QueryTypes.SELECT,
                 raw: true,
             }
         );
-        
-        return user;
+
+        return users.length ? users[0] : null;
     }
 
     static create = async (
@@ -49,7 +50,8 @@ export default class UserService {
                 {
                     replacements: {
                         username,
-                        password: hashedPassword
+                        password: hashedPassword,
+                        QueryTestId: QueryTestId.CreateUser
                     },
                     type: QueryTypes.INSERT
                 }
@@ -57,7 +59,7 @@ export default class UserService {
 
             return { username }
         } catch (err) {
-            console.log(err);
+            console.log({err});
 
             return {
                 error: ErrorType.UserCouldNotBeCreated,

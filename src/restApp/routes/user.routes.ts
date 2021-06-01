@@ -101,8 +101,6 @@ router.post(
     ): Promise<Response | void> => {
         const { username } = req;
 
-        const { currentPassword, newPassword } = req.body;
-
         const user = await UserService.get(username);
 
         if (!user) {
@@ -110,6 +108,8 @@ router.post(
                 error: ErrorType.UserNotFound
             }).end();
         }
+
+        const { currentPassword, newPassword } = req.body;
 
         const isValid = await validatePassword(currentPassword, user.password);
 

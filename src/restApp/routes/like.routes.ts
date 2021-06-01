@@ -8,9 +8,10 @@ import LikeService from '../../services/like.service';
 
 const router = express.Router();
 
+router.use(authenticateToken);
+
 router.get(
     '/most-liked',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,
@@ -34,7 +35,6 @@ router.get(
 
 router.get(
     '/user/:id',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,
@@ -62,7 +62,6 @@ router.get(
 
 router.post(
     '/user/:id/like',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,
@@ -87,7 +86,6 @@ router.post(
 
 router.delete(
     '/user/:id/unlike',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,

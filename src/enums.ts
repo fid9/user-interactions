@@ -5,3 +5,8 @@ export enum ErrorType {
     WrongUsernameOrPassword = 'wrong_username_or_password',
     UserCouldNotBeCreated = 'user_could_not_be_created',
 }
+
+export enum QueryTestId {
+    GetUser = 'GetUser',
+    CreateUser = 'CreateUser'
+}
