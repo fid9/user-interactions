@@ -3,6 +3,7 @@ import { app } from '../../app';
 import { database } from '../../../database/connection';
 
 import UserService from '../../../services/user.service';
+import * as Utils from '../../../utils';
 import { getUserQuery } from '../../../database/queries/user.query';
 import { existingUser, newUser } from '../../../../mock-data/user.mocks';
 import { ErrorType } from '../../../enums';
@@ -34,7 +35,7 @@ describe('user.routes.ts', (): void => {
                     .put('/user-api/signup')
                     .send({
                         username: newUser.username,
-                        password: newUser.password
+                        password: newUser.rawPassword
                     });
 
                 expect(getUser).toBeCalledWith(newUser.username);
@@ -46,7 +47,7 @@ describe('user.routes.ts', (): void => {
 
                 expect(createUser).toBeCalledWith(
                     newUser.username,
-                    newUser.password
+                    newUser.rawPassword
                 );
 
                 expect(createUser).toHaveReturned();
@@ -74,7 +75,7 @@ describe('user.routes.ts', (): void => {
                     .put('/user-api/signup')
                     .send({
                         username: existingUser.username,
-                        password: existingUser.password
+                        password: existingUser.rawPassword
                     });
 
                 expect(getUser).toBeCalledWith(existingUser.username);
@@ -86,11 +87,81 @@ describe('user.routes.ts', (): void => {
 
                 expect(createUser).toBeCalledWith(
                     existingUser.username,
-                    existingUser.password
+                    existingUser.rawPassword
                 );
 
                 expect(response.status).toBe(400);
                 expect(response.body.error).toBe(ErrorType.UserAlreadyExists);
+            }
+        );
+
+        test(
+            'It should succeed on user login',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .post('/user-api/login')
+                    .send({
+                        username: existingUser.username,
+                        password: existingUser.rawPassword
+                    });
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                await expect(
+                    Utils.validatePassword(
+                        existingUser.rawPassword, 
+                        existingUser.password
+                )).resolves.toEqual(true);
+
+                expect(response.status).toBe(200);
+            }
+        );
+
+        test(
+            'It should fail on user login',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const validatePassword = jest.spyOn(
+                    Utils,
+                    'validatePassword'
+                )
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .post('/user-api/login')
+                    .send({
+                        username: newUser.username,
+                        password: newUser.rawPassword
+                    });
+
+                expect(getUser).toBeCalledWith(newUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                expect(validatePassword).toHaveBeenCalledTimes(0);
+
+                expect(response.status).toBe(404);
+                expect(response.body.error).toBe(ErrorType.WrongUsernameOrPassword);
             }
         );
     })
