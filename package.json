@@ -27,6 +27,7 @@
     "@types/jsonwebtoken": "8.5.1",
     "@types/sequelize": "4.28.8",
     "@types/jest": "25.1.4",
+    "@types/express-unless": "0.5.1",
     "ts-jest": "26.4.4",
     "sequelize-mock": "0.10.2",
     "supertest": "4.0.2",
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@types/crypto-js": "4.0.1",
+    "express-unless": "0.5.0",
     "bcrypt": "5.0.1",
     "crypto-js": "4.0.0",
     "jest": "26.4.2",

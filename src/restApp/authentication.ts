@@ -1,18 +1,32 @@
 import { Response, NextFunction } from "express";
+import unless from 'express-unless';
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { CustomRequest } from "../interfaces/CustomRequest";
 import httpStatus from "http-status";
 import { JWTResponse } from "../interfaces/JWTResponse";
+import { existingUser } from "../../mock-data/user.mocks";
 
 dotenv.config();
 
-export const authenticateToken = (
+const authenticateToken = (
     req: CustomRequest,
     res: Response,
     next: NextFunction,
 ): void => {
+    if (process.env.NODE_ENV === 'test') {
+        const { authorization } = req.headers;
+
+        if (authorization !== existingUser.username) {
+            return res.status(httpStatus.FORBIDDEN).end();
+        }
+        
+        req.username = req.headers.authorization;
+
+        return next();
+    }
+
     if (req.headers.authorization) {
         const token = req.headers.authorization;
 
@@ -40,3 +54,7 @@ export const authenticateToken = (
     }
 
 }
+
+authenticateToken.unless = unless;
+
+export default authenticateToken;

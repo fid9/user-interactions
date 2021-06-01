@@ -4,14 +4,25 @@ import userRoutes from './routes/user.routes';
 import likeRoutes from './routes/like.routes';
 import bodyParser from 'body-parser';
 import { ErrorType } from '../enums';
+import authenticateToken from '../../src/restApp/authentication';
 
 export const app = express();
 
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+	authenticateToken.unless({
+		path: [
+			'/user-api/signup',
+			'/user-api/login'
+		]
+	})
+);
 
 app.use('/user-api', userRoutes);
 app.use('/like-api', likeRoutes);
+
 
 app.use(
 	(req: Request, res: Response, _: NextFunction): Response => {

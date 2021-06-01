@@ -4,7 +4,6 @@ import UserService from '../../services/user.service';
 import { CustomRequest } from '../../interfaces/CustomRequest';
 import { ErrorType } from '../../enums';
 import { generateToken, validatePassword } from '../../utils';
-import { authenticateToken } from '../authentication';
 
 const router = express.Router();
 
@@ -71,7 +70,6 @@ router.post(
 
 router.get(
     '/me',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,
@@ -93,7 +91,6 @@ router.get(
 
 router.post(
     '/me/update-password',
-    authenticateToken,
     async (
         req: CustomRequest,
         res: Response,

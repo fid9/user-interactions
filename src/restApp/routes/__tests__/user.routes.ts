@@ -164,5 +164,53 @@ describe('user.routes.ts', (): void => {
                 expect(response.body.error).toBe(ErrorType.WrongUsernameOrPassword);
             }
         );
+
+        test(
+            'It should succeed on get current user',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .get('/user-api/me')
+                    .set('authorization', existingUser.username);
+
+                expect(getUser).toBeCalledWith(existingUser.username);
+
+                expect(spyOnQuery).toBeCalledWith(
+                    getUserQuery,
+                    expect.any(Object),
+                );
+
+                expect(response.status).toBe(200);
+                expect(response.body).toStrictEqual({ user: existingUser});
+            }
+        );
+
+        test(
+            'It should fail on get current user',
+            async (): Promise<void> => {
+                const getUser = jest.spyOn(
+                    UserService,
+                    'get',
+                );
+
+                const spyOnQuery = jest.spyOn(database, 'query');
+
+                const response = await agent
+                    .get('/user-api/me')
+                    .set('authorization', newUser.username);
+
+                expect(getUser).toHaveBeenCalledTimes(0);
+
+                expect(spyOnQuery).toHaveBeenCalledTimes(0);
+
+                expect(response.status).toBe(403);
+            }
+        );
     })
 })

@@ -7,7 +7,7 @@ import {
 } from "../database/queries/like.query";
 import { database } from "../database/connection";
 import { GetUserLikesResponse } from "../interfaces/GetUserLikesResponse";
-import { GetAllLikesResponse } from "src/interfaces/GetAllLikesResponse";
+import { GetAllLikesResponse } from "../interfaces/GetAllLikesResponse";
 
 export default class LikeService {
     static get = async (

@@ -3,12 +3,9 @@ import httpStatus from 'http-status';
 import UserService from '../../services/user.service';
 import { CustomRequest } from '../../interfaces/CustomRequest';
 import { ErrorType } from '../../enums';
-import { authenticateToken } from '../authentication';
 import LikeService from '../../services/like.service';
 
 const router = express.Router();
-
-router.use(authenticateToken);
 
 router.get(
     '/most-liked',
