@@ -1,7 +1,7 @@
 import request from 'supertest';
+
 import { app } from '../../app';
 import { database } from '../../../database/connection';
-
 import UserService from '../../../services/user.service';
 import * as Utils from '../../../utils';
 import { getUserQuery } from '../../../database/queries/user.query';
@@ -9,305 +9,312 @@ import { existingUser, newUser } from '../../../../mock-data/user.mocks';
 import { ErrorType } from '../../../enums';
 
 describe('user.routes.ts', (): void => {
-    const agent = request.agent(app);
+	const agent = request.agent(app);
 
-    describe('/ - create user', (): void => {
-        afterEach(() => {
-            jest.clearAllMocks();
-        });
+	beforeAll((done) => {
+		done();
+	});
 
-        test(
-            'It should succeed on user creation',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+	describe('/ - create user', (): void => {
+		test(
+			'It should succeed on user creation',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-                const createUser = jest.spyOn(
-                    UserService,
-                    'create'
-                );
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const response = await agent
-                    .put('/user-api/signup')
-                    .send({
-                        username: newUser.username,
-                        password: newUser.rawPassword
-                    });
+				const createUser = jest.spyOn(
+					UserService,
+					'create',
+				);
 
-                expect(getUser).toBeCalledWith(newUser.username);
+				const response = await agent
+					.put('/user-api/signup')
+					.send({
+						username: newUser.username,
+						password: newUser.rawPassword,
+					});
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(getUser).toBeCalledWith(newUser.username);
 
-                expect(createUser).toBeCalledWith(
-                    newUser.username,
-                    newUser.rawPassword
-                );
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(createUser).toHaveReturned();
+				expect(createUser).toBeCalledWith(
+					newUser.username,
+					newUser.rawPassword,
+				);
 
-                expect(response.status).toBe(200);
-            })
+				expect(createUser).toHaveReturned();
 
-        test(
-            'It should fail on user creation',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+				expect(response.status).toBe(200);
+			},
+		);
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+		test(
+			'It should fail on user creation',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-                const createUser = jest.spyOn(
-                    UserService,
-                    'create'
-                );
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const response = await agent
-                    .put('/user-api/signup')
-                    .send({
-                        username: existingUser.username,
-                        password: existingUser.rawPassword
-                    });
+				const createUser = jest.spyOn(
+					UserService,
+					'create',
+				);
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				const response = await agent
+					.put('/user-api/signup')
+					.send({
+						username: existingUser.username,
+						password: existingUser.rawPassword,
+					});
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(createUser).toBeCalledWith(
-                    existingUser.username,
-                    existingUser.rawPassword
-                );
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(response.status).toBe(400);
-                expect(response.body.error).toBe(ErrorType.UserAlreadyExists);
-            }
-        );
-    });
+				expect(createUser).toBeCalledWith(
+					existingUser.username,
+					existingUser.rawPassword,
+				);
 
-    describe('/ - login', (): void => {
+				expect(response.status).toBe(400);
+				expect(response.body.error).toBe(ErrorType.UserAlreadyExists);
+			},
+		);
+	});
 
-        test(
-            'It should succeed on user login',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+	describe('/ - login', (): void => {
+		test(
+			'It should succeed on user login',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const response = await agent
-                    .post('/user-api/login')
-                    .send({
-                        username: existingUser.username,
-                        password: existingUser.rawPassword
-                    });
+				const response = await agent
+					.post('/user-api/login')
+					.send({
+						username: existingUser.username,
+						password: existingUser.rawPassword,
+					});
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                await expect(
-                    Utils.validatePassword(
-                        existingUser.rawPassword,
-                        existingUser.password
-                    )).resolves.toEqual(true);
+				await expect(
+					Utils.validatePassword(
+						existingUser.rawPassword,
+						existingUser.password,
+					),
+				).resolves.toEqual(true);
 
-                expect(response.status).toBe(200);
-            }
-        );
+				expect(response.status).toBe(200);
+			},
+		);
 
-        test(
-            'It should fail on user login',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+		test(
+			'It should fail on user login',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const response = await agent
-                    .post('/user-api/login')
-                    .send({
-                        username: existingUser.username,
-                        password: newUser.rawPassword
-                    });
+				const response = await agent
+					.post('/user-api/login')
+					.send({
+						username: existingUser.username,
+						password: newUser.rawPassword,
+					});
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                await expect(
-                    Utils.validatePassword(
-                        newUser.rawPassword,
-                        existingUser.password
-                    )).resolves.toEqual(false);
+				await expect(
+					Utils.validatePassword(
+						newUser.rawPassword,
+						existingUser.password,
+					),
+				).resolves.toEqual(false);
 
-                expect(response.status).toBe(403);
-                expect(response.body).toStrictEqual({
-                    error: ErrorType.WrongUsernameOrPassword
-                });
-            }
-        );
+				expect(response.status).toBe(403);
+				expect(response.body).toStrictEqual({
+					error: ErrorType.WrongUsernameOrPassword,
+				});
+			},
+		);
+	});
 
-    });
+	describe('/ - get current user', (): void => {
+		test(
+			'It should succeed on get current user',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-    describe('/ - get current user', (): void => {
-        test(
-            'It should succeed on get current user',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const response = await agent
+					.get('/user-api/me')
+					.set('authorization', existingUser.username);
 
-                const response = await agent
-                    .get('/user-api/me')
-                    .set('authorization', existingUser.username);
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(response.status).toBe(200);
+				expect(response.body).toStrictEqual({ user: existingUser });
+			},
+		);
 
-                expect(response.status).toBe(200);
-                expect(response.body).toStrictEqual({ user: existingUser });
-            }
-        );
+		test(
+			'It should fail on get current user',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-        test(
-            'It should fail on get current user',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const response = await agent
+					.get('/user-api/me')
+					.set('authorization', newUser.username);
 
-                const response = await agent
-                    .get('/user-api/me')
-                    .set('authorization', newUser.username);
+				expect(getUser).toBeCalledWith(newUser.username);
 
-                expect(getUser).toBeCalledWith(newUser.username);
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				expect(response.status).toBe(404);
+				expect(response.body).toStrictEqual(
+					{ error: ErrorType.UserNotFound },
+				);
+			},
+		);
+	});
 
-                expect(response.status).toBe(404);
-                expect(response.body).toStrictEqual(
-                    { error: ErrorType.UserNotFound }
-                );
-            }
-        );
-    });
+	describe('/ - update user password', (): void => {
+		test(
+			'It should succeed on update password',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-    describe('/ - update user password', (): void => {
-        test(
-            'It should succeed on update password',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+				const updatePassword = jest.spyOn(
+					UserService,
+					'updatePassword',
+				);
 
-                const updatePassword = jest.spyOn(
-                    UserService,
-                    'updatePassword'
-                )
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const response = await agent
+					.post('/user-api/me/update-password')
+					.send({
+						currentPassword: existingUser.rawPassword,
+						newPassword: '12345678',
+					})
+					.set('authorization', existingUser.username);
 
-                const response = await agent
-                    .post('/user-api/me/update-password')
-                    .send({
-                        currentPassword: existingUser.rawPassword,
-                        newPassword: '12345678'
-                    })
-                    .set('authorization', existingUser.username);
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				await expect(
+					Utils.validatePassword(
+						existingUser.rawPassword,
+						existingUser.password,
+					),
+				).resolves.toEqual(true);
 
-                await expect(
-                    Utils.validatePassword(
-                        existingUser.rawPassword,
-                        existingUser.password
-                    )).resolves.toEqual(true);
+				expect(updatePassword).toBeCalledWith(
+					existingUser.username,
+					'12345678',
+				);
 
-                expect(updatePassword).toBeCalledWith(
-                    existingUser.username,
-                    '12345678'
-                );
+				expect(response.status).toBe(200);
+			},
+		);
 
-                expect(response.status).toBe(200);
-            }
-        );
+		test(
+			'It should fail on update password',
+			async (): Promise<void> => {
+				const getUser = jest.spyOn(
+					UserService,
+					'get',
+				);
 
-        test(
-            'It should fail on update password',
-            async (): Promise<void> => {
-                const getUser = jest.spyOn(
-                    UserService,
-                    'get',
-                );
+				const spyOnQuery = jest.spyOn(database, 'query');
 
-                const spyOnQuery = jest.spyOn(database, 'query');
+				const response = await agent
+					.post('/user-api/me/update-password')
+					.send({
+						currentPassword: newUser.rawPassword,
+						newPassword: '12345678',
+					})
+					.set('authorization', existingUser.username);
 
-                const response = await agent
-                    .post('/user-api/me/update-password')
-                    .send({
-                        currentPassword: newUser.rawPassword,
-                        newPassword: '12345678'
-                    })
-                    .set('authorization', existingUser.username);
+				expect(getUser).toBeCalledWith(existingUser.username);
 
-                expect(getUser).toBeCalledWith(existingUser.username);
+				expect(spyOnQuery).toBeCalledWith(
+					getUserQuery,
+					expect.any(Object),
+				);
 
-                expect(spyOnQuery).toBeCalledWith(
-                    getUserQuery,
-                    expect.any(Object),
-                );
+				await expect(
+					Utils.validatePassword(
+						newUser.rawPassword,
+						existingUser.password,
+					),
+				).resolves.toEqual(false);
 
-                await expect(
-                    Utils.validatePassword(
-                        newUser.rawPassword,
-                        existingUser.password
-                    )).resolves.toEqual(false);
-
-                expect(response.status).toBe(403);
-                expect(response.body).toStrictEqual(
-                    { error: ErrorType.WrongUsernameOrPassword }
-                );
-            }
-        );
-    });
-})
+				expect(response.status).toBe(403);
+				expect(response.body).toStrictEqual(
+					{ error: ErrorType.WrongUsernameOrPassword },
+				);
+			},
+		);
+	});
+});

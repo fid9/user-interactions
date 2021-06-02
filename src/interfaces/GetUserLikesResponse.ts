@@ -1,3 +1,3 @@
 export interface GetUserLikesResponse {
-    senderUser: string,
+	senderUser: string,
 }

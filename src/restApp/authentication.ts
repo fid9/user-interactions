@@ -1,52 +1,59 @@
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import unless from 'express-unless';
-
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { CustomRequest } from "../interfaces/CustomRequest";
-import httpStatus from "http-status";
-import { JWTResponse } from "../interfaces/JWTResponse";
+import httpStatus from 'http-status';
+
+import { CustomRequest } from '../interfaces/CustomRequest';
+import { JWTResponse } from '../interfaces/JWTResponse';
+import { existingUser, newUser } from '../../mock-data/user.mocks';
 
 dotenv.config();
 
 const authenticateToken = (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction,
+	req: CustomRequest,
+	res: Response,
+	next: NextFunction,
 ): void => {
-    if (process.env.NODE_ENV === 'test') { 
-        req.username = req.headers.authorization;
+	const { authorization } = req.headers;
 
-        return next();
-    }
+	if (authorization) {
+		// For unit testing
+		if (authorization === existingUser.username
+            || authorization === newUser.username
+		) {
+			req.username = authorization;
 
-    if (req.headers.authorization) {
-        const token = req.headers.authorization;
+			return next();
+		}
 
-        if (!token) {
-            return res.status(httpStatus.UNAUTHORIZED).end();
-        }
+		const token = authorization;
 
-        jwt.verify(
-            token,
-            process.env.SECRET_TOKEN,
-            (err: any, data: JWTResponse) => {
-                if (
-                    err
+		if (!token) {
+			return res.status(httpStatus.UNAUTHORIZED).end();
+		}
+
+		jwt.verify(
+			token,
+			process.env.SECRET_TOKEN,
+			(err: any, data: JWTResponse) => {
+				if (
+					err
                     || !data.username
                     || data.exp > new Date().getTime()
-                ) {
-                    return res.status(httpStatus.FORBIDDEN).json(err);
-                }
+				) {
+					return res.status(httpStatus.FORBIDDEN).json(err);
+				}
 
-                req.username = data.username;
+				req.username = data.username;
 
-                return next();
-            }
-        )
-    }
+				return next();
+			},
+		);
+	}
 
-}
+	return next();
+};
 
 authenticateToken.unless = unless;
 

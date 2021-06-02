@@ -1,0 +1,19 @@
+version: "3"
+services:
+  povio-app:
+    build:
+      context: .
+      args:
+        NODE_ENV: dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: dev
+    command: npm run dev
+
+  povio-app-db:
+    image: mysql
+    restart: always
+    environment:
+      NODE_ENV: dev

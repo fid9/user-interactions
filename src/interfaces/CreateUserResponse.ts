@@ -1,6 +1,6 @@
-import { ErrorType } from "../enums";
+import { ErrorType } from '../enums';
 
 export interface CreateUserResponse {
-    username?: string;
-    error?: ErrorType;
+	username?: string;
+	error?: ErrorType;
 }

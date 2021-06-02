@@ -20,4 +20,4 @@ export const updatePasswordQuery = `
 UPDATE users
 SET password = :password, updated_at = NOW()
 WHERE username = :username;
-`
+`;

@@ -2,10 +2,13 @@
   "name": "Fidan_Sinani_NodeJS",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/restApp/app.ts",
   "scripts": {
     "dev": "ts-node -r dotenv/config src/restApp/app.local.ts",
-    "test": "jest --runInBand --detectOpenHandles"
+    "test": "jest --runInBand",
+    "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx",
+    "lint-fix": "eslint src/ --ext .js,.ts,.jsx,.tsx --fix",
+    "type-check": "tsc"
   },
   "repository": {
     "type": "git",
@@ -25,13 +28,18 @@
     "@types/express": "4.17.12",
     "@types/http-status": "1.1.2",
     "@types/jsonwebtoken": "8.5.1",
+    "eslint-config-airbnb-typescript": "11.0.0",
+    "@typescript-eslint/eslint-plugin": "4.2.0",
+    "eslint-plugin-import": "2.22.1",
     "@types/sequelize": "4.28.8",
     "@types/jest": "25.1.4",
     "@types/express-unless": "0.5.1",
     "ts-jest": "26.4.4",
     "sequelize-mock": "0.10.2",
     "supertest": "4.0.2",
+    "eslint": "7.16.0",
     "@types/supertest": "2.0.8",
+    "@types/hapi__joi": "15.0.4",
     "jest": "27.0.3",
     "ts-node": "9.0.0",
     "typescript": "4.3.2"
@@ -39,7 +47,9 @@
   "dependencies": {
     "@types/crypto-js": "4.0.1",
     "express-unless": "0.5.0",
+    "express-joi-validation": "4.0.3",
     "bcrypt": "5.0.1",
+    "@hapi/joi": "16.1.8",
     "crypto-js": "4.0.0",
     "jest": "26.4.2",
     "dotenv": "8.2.0",

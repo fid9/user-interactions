@@ -28,4 +28,4 @@ FROM users u
 LEFT JOIN likes l
 ON u.username = l.receiver_user
 WHERE l.receiver_user IS NULL;
-`
+`;

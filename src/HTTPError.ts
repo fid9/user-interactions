@@ -1,6 +1,6 @@
 import statusCode from 'http-status';
-import { ErrorType } from './enums';
 
+import { ErrorType } from './enums';
 
 class HTTPError extends Error {
 	public type = ErrorType.Default;
