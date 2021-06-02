@@ -15,7 +15,7 @@ I chose MySQL for no particular reason except that i'm more comfortable with it,
 
 If you have any trouble running themysql docker container, you can use these credentials for an up-and-running third party server:
 
-MYSQL_USER=sql4416141
-MYSQL_PASSWORD=ICdKUtltJI
-MYSQL_DATABASE=sql4416141
-MYSQL_HOST=sql4.freemysqlhosting.net
+- `MYSQL_USER=sql4416141`
+- `MYSQL_PASSWORD=ICdKUtltJI`
+- `MYSQL_DATABASE=sql4416141`
+- `MYSQL_HOST=sql4.freemysqlhosting.net`
